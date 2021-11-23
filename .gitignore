@@ -4,3 +4,5 @@
 __pycache__/
 /yolor/pytorch_wavelets
 /dataset/train
+/yolor/runs
+/yolor/best_overall.pt

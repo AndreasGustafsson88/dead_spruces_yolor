@@ -7,18 +7,21 @@ Modified implementation on YOLOR based on [WongKinYiu](https://github.com/WongKi
 
 ## Inference
 ```
-python detect.py --source screen --device cpu --cfg cfg/yolor_p6.cfg --weights runs/train/yolor_snags/weights/best_overall.pt --conf 0.5 --img-size 1280
+python detect.py --source screen --device cpu --cfg cfg/yolor_p6.cfg --weights best_overall.pt --conf 0.5 --img-size 1280
 ```
 
 ![example](dataset/samples/real_time.png)
-![zoomed out view](dataset/samples/sverige.PNG)
 
-![1](dataset/samples/Original042.PNG)
-![1](dataset/samples/Original044.PNG)
-![1](dataset/samples/Original045.PNG)
+<img src="dataset/samples/sverige.PNG" width="200" height="200">
+
+<img src="dataset/samples/Original042.PNG" width="200" height="200">
+<img src="dataset/samples/Original044.PNG" width="200" height="200">
+<img src="dataset/samples/Original045.PNG" width="200" height="200">
 
 set screensize in utils/datasets.py
-default: self.screensize = (0, 0, 1920/2, 1080)
+````python
+self.screensize = (0, 0, 1920/2, 1080)
+````
 
 ## CPU Installation
 
@@ -28,6 +31,13 @@ pip install -r requirements.txt
 ```
 ```
 pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+```
+
+### Get pretrained weights
+
+```
+cd /yolor
+bash scripts/get_weights.sh
 ```
 
 Then follow installation specified below.
