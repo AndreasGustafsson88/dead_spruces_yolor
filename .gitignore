@@ -1,2 +1,6 @@
 /venv
 /.idea
+*.cache3
+__pycache__/
+/yolor/pytorch_wavelets
+/dataset/train

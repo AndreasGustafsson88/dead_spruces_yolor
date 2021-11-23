@@ -13,6 +13,7 @@ from threading import Thread
 
 import cv2
 import numpy as np
+import pyautogui
 import torch
 from PIL import Image, ExifTags
 from torch.utils.data import Dataset
@@ -20,7 +21,7 @@ from tqdm import tqdm
 
 import pickle
 from copy import deepcopy
-from pycocotools import mask as maskUtils
+# from pycocotools import mask as maskUtils
 from torchvision.utils import save_image
 
 from utils.general import xyxy2xywh, xywh2xyxy
@@ -286,6 +287,8 @@ class LoadStreams:  # multiple IP or RTSP cameras
         self.mode = 'images'
         self.img_size = img_size
 
+        self.screensize = (0, 0, 1920/2, 1080)
+
         if os.path.isfile(sources):
             with open(sources, 'r') as f:
                 sources = [x.strip() for x in f.read().splitlines() if len(x.strip())]
@@ -295,18 +298,16 @@ class LoadStreams:  # multiple IP or RTSP cameras
         n = len(sources)
         self.imgs = [None] * n
         self.sources = sources
+
         for i, s in enumerate(sources):
-            # Start the thread to read frames from the video stream
             print('%g/%g: %s... ' % (i + 1, n, s), end='')
-            cap = cv2.VideoCapture(eval(s) if s.isnumeric() else s)
-            assert cap.isOpened(), 'Failed to open %s' % s
-            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            fps = cap.get(cv2.CAP_PROP_FPS) % 100
-            _, self.imgs[i] = cap.read()  # guarantee first frame
-            thread = Thread(target=self.update, args=([i, cap]), daemon=True)
-            print(' success (%gx%g at %.2f FPS).' % (w, h, fps))
-            thread.start()
+
+            if s == '0':
+                self.read_camera(i, s)
+            else:
+                self.get_frame_from_screen(0)
+
+            # Start the thread to read frames from the video stream
         print('')  # newline
 
         # check for common shapes
@@ -315,9 +316,39 @@ class LoadStreams:  # multiple IP or RTSP cameras
         if not self.rect:
             print('WARNING: Different stream shapes detected. For optimal performance supply similarly-shaped streams.')
 
+    def read_camera(self, i, s):
+        cap = cv2.VideoCapture(eval(s) if s.isnumeric() else s)
+        assert cap.isOpened(), 'Failed to open %s' % s
+        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = cap.get(cv2.CAP_PROP_FPS) % 100
+        _, self.imgs[i] = cap.read()  # guarantee first frame
+        thread = Thread(target=self.update, args=([i, cap]), daemon=True)
+        thread.start()
+        print(' success (%gx%g at %.2f FPS).' % (w, h, fps))
+
+    def get_frame_from_screen(self, i):
+
+        frame = pyautogui.screenshot(region=(0, 0, 1920 / 2, 1080))
+        frame = np.array(frame)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        self.imgs[i] = frame
+
+    # def read_screen(self, i):
+    #
+    #     self.get_frame_from_screen()
+    #     self.imgs[i] = self.screen_shot
+    #
+    #     thread = Thread(target=self.update, args=([i, False]), daemon=True)
+    #     thread.start()
+    #
+    #     print('Success in capturing screen')
+
     def update(self, index, cap):
         # Read next stream frame in a daemon thread
         n = 0
+        # if cap:
         while cap.isOpened():
             n += 1
             # _, self.imgs[index] = cap.read()
@@ -327,12 +358,22 @@ class LoadStreams:  # multiple IP or RTSP cameras
                 n = 0
             time.sleep(0.01)  # wait time
 
+        # else:
+        #     while True:
+        #         self.get_frame_from_screen()
+        #         self.imgs[index] = self.screen_shot
+        #         time.sleep(5)  # Stop from grabbing screen shots all the time, adjust depending on computer capability
+
     def __iter__(self):
         self.count = -1
         return self
 
     def __next__(self):
         self.count += 1
+
+        if self.sources[0] == 'screen':
+            self.get_frame_from_screen(0)
+
         img0 = self.imgs.copy()
         if cv2.waitKey(1) == ord('q'):  # q to quit
             cv2.destroyAllWindows()
@@ -369,7 +410,7 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         def img2label_paths(img_paths):
             # Define label paths as a function of image paths
             sa, sb = os.sep + 'images' + os.sep, os.sep + 'labels' + os.sep  # /images/, /labels/ substrings
-            return [x.replace(sa, sb, 1).replace(x.split('.')[-1], 'txt') for x in img_paths]
+            return [x.replace('images', 'labels').replace(os.path.splitext(x)[-1], '.txt') for x in img_paths]
 
         try:
             f = []  # image files

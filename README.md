@@ -1,4 +1,37 @@
 # YOLOR
+
+Modified implementation on YOLOR based on [WongKinYiu](https://github.com/WongKinYiu/yolor) implementation.
+
+*   Added real time inference from screen recording
+*   CPU compatibility for non-CUDA compatible computers.
+
+## Inference
+```
+python detect.py --source screen --device cpu --cfg cfg/yolor_p6.cfg --weights runs/train/yolor_snags/weights/best_overall.pt --conf 0.5 --img-size 1280
+```
+
+![example](dataset/samples/real_time.png)
+![zoomed out view](dataset/samples/sverige.PNG)
+
+![1](dataset/samples/Original042.PNG)
+![1](dataset/samples/Original044.PNG)
+![1](dataset/samples/Original045.PNG)
+
+set screensize in utils/datasets.py
+default: self.screensize = (0, 0, 1920/2, 1080)
+
+## CPU Installation
+
+```
+!git clone https://github.com/AndreasGustafsson88/dead_spruces_yolor
+pip install -r requirements.txt
+```
+```
+pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+```
+
+Then follow installation specified below.
+
 implementation of paper - [You Only Learn One Representation: Unified Network for Multiple Tasks](https://arxiv.org/abs/2105.04206)
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/you-only-learn-one-representation-unified/real-time-object-detection-on-coco)](https://paperswithcode.com/sota/real-time-object-detection-on-coco?p=you-only-learn-one-representation-unified)
