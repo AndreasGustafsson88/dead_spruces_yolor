@@ -10,13 +10,9 @@ Modified implementation on YOLOR based on [WongKinYiu](https://github.com/WongKi
 python detect.py --source screen --device cpu --cfg cfg/yolor_p6.cfg --weights best_overall.pt --conf 0.5 --img-size 1280
 ```
 
-![example](dataset/samples/real_time.png)
+![example](dataset/samples/real_time.png)<img src="dataset/samples/sverige.PNG" width="200" height="200">
 
-<img src="dataset/samples/sverige.PNG" width="200" height="200">
-
-<img src="dataset/samples/Original042.PNG" width="200" height="200">
-<img src="dataset/samples/Original044.PNG" width="200" height="200">
-<img src="dataset/samples/Original045.PNG" width="200" height="200">
+<img src="dataset/samples/Original042.PNG" width="200" height="200"><img src="dataset/samples/Original044.PNG" width="200" height="200"><img src="dataset/samples/Original045.PNG" width="200" height="200">
 
 set screensize in utils/datasets.py
 ````python
