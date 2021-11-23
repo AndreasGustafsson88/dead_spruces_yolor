@@ -5,12 +5,12 @@ Modified implementation on YOLOR based on [WongKinYiu](https://github.com/WongKi
 *   Added real time inference from screen recording
 *   CPU compatibility for non-CUDA compatible computers.
 
-## Inference
+## Real time inference
 ```
 python detect.py --source screen --device cpu --cfg cfg/yolor_p6.cfg --weights best_overall.pt --conf 0.5 --img-size 1280
 ```
 
-![example](dataset/samples/real_time.png)<img src="dataset/samples/sverige.PNG" width="200" height="400">
+![example](dataset/samples/real_time.png)
 
 <img src="dataset/samples/Original042.PNG" width="300" height="300"> <img src="dataset/samples/Original044.PNG" width="300" height="300"> <img src="dataset/samples/Original045.PNG" width="300" height="300">
 
@@ -21,18 +21,30 @@ self.screensize = (0, 0, 1920/2, 1080)
 
 ## CPU Installation
 
+<details><summary> <b>Expand</b> </summary>
+
 ```
 !git clone https://github.com/AndreasGustafsson88/dead_spruces_yolor
 pip install -r requirements.txt
-```
-```
+
 pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+
+cd yolor
+
+# install pytorch_wavelets if you want to use dwt down-sampling module
+# https://github.com/fbcotter/pytorch_wavelets
+
+git clone https://github.com/fbcotter/pytorch_wavelets
+cd pytorch_wavelets
+pip install .
+cd ..
 ```
+
+</details>
 
 ### Get pretrained weights
 
 ```
-cd /yolor
 bash scripts/get_weights.sh
 ```
 
