@@ -1,4 +1,4 @@
-# YOLOR
+# YOLOR for identifying standing dead spruces
 
 Modified implementation on YOLOR based on [WongKinYiu](https://github.com/WongKinYiu/yolor) implementation.
 
@@ -43,6 +43,10 @@ cd ..
 </details>
 
 ### Get pretrained weights
+
+Weights mAP@0.5 = 0.925
+
+Predict on [Lantmäteriet map](https://minkarta.lantmateriet.se/)
 
 ```
 bash scripts/get_weights.sh
